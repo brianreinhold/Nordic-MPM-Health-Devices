@@ -12,3 +12,4 @@ This MPM standard could be supported by any reliable transport.
 ## Repository Contents
 The Nordic SDKs for nRF52 and nRF51 can be freely downloaded from https://www.nordicsemi.com/Products/Development-software/nRF5-SDK/Download#infotabs. This repository only contains code that is mean to be inserted into the nRF5_SDK_17.0.2_d674dde\examples\ble_peripheral or nrf_SDK_12.3.0\examples\ble_peripheral directory. Projects have been made for Segger Embedded Studio (which is free for development on Nordic platforms) and Keil. For the nRF51 projects only Keil projects are provided. However, the nRF51 project builds are small enough that one can use the size-limited free version.
 
+In progress -
