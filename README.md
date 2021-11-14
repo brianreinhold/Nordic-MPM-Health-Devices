@@ -902,7 +902,7 @@ Here is a set of table summarizing the packet formats
 
 ## Header Packet Option
 
-| command | ![Shape2](RackMultipart20211114-4-1hp2mkw_html_f4cbe1f37917e10d.gif)header | Measurement 1 | Measurement 2 | … | ![Shape3](RackMultipart20211114-4-1hp2mkw_html_6b633a88aaebf9b5.gif)Measurement _n_ |
+| command | header | Measurement 1 | Measurement 2 | … | Measurement _n_ |
 | --- | --- | --- | --- | --- | --- |
 
 | flags | Length of PDU | Time stamp | Supplemental types | references | duration | Person id | AVAs | Group id | Number of measurements |
@@ -911,46 +911,30 @@ Here is a set of table summarizing the packet formats
 | type | length | Measurement flags | id | Measurement Value | Supplemental Types | reference | duration | AVAs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
-![Shape4](RackMultipart20211114-4-1hp2mkw_html_4571e938197a8d6.gif)
-
-![Shape5](RackMultipart20211114-4-1hp2mkw_html_372515011ea213a2.gif) ![Shape6](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | units | float |
 | --- | --- |
-
- ![Shape7](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
 
 | units | count | Sub-type _n_ | Sub-value _n_ |
 | --- | --- | --- | --- |
 
- ![Shape8](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | code |
 | --- |
-
- ![Shape9](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
 
 | BITs 16 value | BITs 16 type mask | BITs 16 support mask |
 | --- | --- | --- |
 
- ![Shape10](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | BITs 32 value | BITs 32 type mask | BITs 32 support mask |
 | --- | --- | --- |
 
- ![Shape11](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
 
 | units | period | Scale factor | offset | Sample size | Number of samples | samples |
 | --- | --- | --- | --- | --- | --- | --- |
 
- ![Shape12](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | AVAs |
 | --- |
 
-![Shape13](RackMultipart20211114-4-1hp2mkw_html_2c5c7a499f846298.gif)
 
-| Number of AVAs | ![Shape14](RackMultipart20211114-4-1hp2mkw_html_ccaefadb017f54fb.gif)AVA _n_ |
+| Number of AVAs | AVA _n_ |
 | --- | --- |
 
 | AVA type | length | value |
@@ -986,10 +970,9 @@ Here is a set of table summarizing the packet formats
 
 ## Optimized Header Packet Option
 
-| command | ![Shape15](RackMultipart20211114-4-1hp2mkw_html_e33a0ec99b0182db.gif)header | Measurement 1 | Measurement 2 | … | Measurement _n_ |
+| command | header | Measurement 1 | Measurement 2 | … | Measurement _n_ |
 | --- | --- | --- | --- | --- | --- |
 
-![Shape16](RackMultipart20211114-4-1hp2mkw_html_c38f21e28ad095ca.gif)
 
 | flags | Length of PDU | Time stamp | Group Id |
 | --- | --- | --- | --- |
@@ -997,37 +980,25 @@ Here is a set of table summarizing the packet formats
 | id | Measurement Value |
 | --- | --- |
 
- ![Shape17](RackMultipart20211114-4-1hp2mkw_html_2175022d0943271e.gif) ![Shape18](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | float |
 | --- |
-
- ![Shape19](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
 
 | Sub-value _n_ |
 | --- |
 
- ![Shape20](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
 
 | code |
 | --- |
 
- ![Shape21](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
 
 | BITs 16 value |
 | --- |
 
- ![Shape22](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | BITs 32 value |
 | --- |
 
- ![Shape23](RackMultipart20211114-4-1hp2mkw_html_cfdb48b1145654a8.gif)
-
 | Number of samples | samples |
 | --- | --- |
-
- ![Shape24](RackMultipart20211114-4-1hp2mkw_html_3430e3868039b0b7.gif)
 
 | AVAs |
 | --- |
