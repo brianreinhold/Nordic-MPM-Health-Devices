@@ -862,7 +862,6 @@ Here is a set of table summarizing the packet formats
 | command | main flags | length | Current Time | AVA count | AVA structs |
 | --- | --- | --- | --- | --- | --- |
 
-![Shape1](RackMultipart20211114-4-1hp2mkw_html_8cba3116a069d82.gif)
 
 | epoch | flags | offset | Time sync |
 | --- | --- | --- | --- |
@@ -887,10 +886,9 @@ Here is a set of table summarizing the packet formats
 
 | command | flags | length | System id | count | Specialization code _n_ | length | Manufacturer Name |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| length | Model number | Regulation status | length | Serial number | length | firmware |
-| length | software | length | hardware | AVA count | AVA structs |
- |
- |
+
+| length | Model number | Regulation status | length | Serial number | length | firmware | length | software | length | hardware | AVA count | AVA structs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 - Flags: (two bytes)
   - Bit 0: When set, there is a regulation status
