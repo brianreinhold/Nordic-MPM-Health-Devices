@@ -12,6 +12,7 @@ This MPM standard could be supported by any reliable transport.
 ## Repository Contents
 The Nordic SDKs for nRF52 and nRF51 can be freely downloaded from https://www.nordicsemi.com/Products/Development-software/nRF5-SDK/Download#infotabs. This repository only contains code that is meant to be inserted into the nRF5_SDK_17.0.2_d674dde\examples\ble_peripheral or nrf_SDK_12.3.0\examples\ble_peripheral directory. Projects have been made for Segger Embedded Studio (which is free for development on Nordic platforms) and Keil. For the nRF51 projects only Keil projects are provided. However, the nRF51 project builds are small enough that one can use the size-limited free version.
 
+The following describes the Metric Packet Model standard:
 
 # Metric Packet Model Implementation Guide
 
@@ -25,7 +26,7 @@ The MPM defines four packet templates that contain the information sent from the
 
 - Current time and clock information packet (current time and clock properties)
 - System Information packet (static information about the device like the serial and model number)
-- Configuration Information packet (optional and currently not defined)
+- *Configuration Information packet (optional and currently not defined)*
 - Metric Data packet (measurement data)
 
 The Metric Data packet defines the following templates for the supported measurement value types
@@ -36,7 +37,7 @@ The Metric Data packet defines the following templates for the supported measure
 - BITs (a set of potentially simultaneous events or states)
 - Periodic waveforms (ecg trace, pleth wave, spirometric flow data)
 
-Each packet is a template. IEEE 11073 10101 nomenclature codes are used to interpret the semantic meaning of the items within the template. Nomenclature codes are 32-bit unsigned numbers. Since 32-bit numbers are hard to remember, reference identifiers are used to indicate those numbers for human convenience. Reference identifiers are not used on the wire in this packet model. An example of a reference identifier and the 32-bit code it corresponds to is MDC\_TEMP\_ORAL (188424).
+Each packet is a &#39;template&#39;. IEEE 11073 10101 nomenclature codes are used to interpret the semantic meaning of the items within the template. Nomenclature codes are 32-bit unsigned numbers. Since 32-bit numbers are hard to remember, reference identifiers are used to indicate what those numbers mean for human convenience. Reference identifiers are not used on the wire in this packet model. An example of a reference identifier and the 32-bit code it corresponds to is MDC\_TEMP\_ORAL (188424).
 
 The template allows an implementer to write code once for each template and it will handle all PHD types now and in the future that use that template.
 
@@ -49,27 +50,27 @@ Generic simple numeric template:
 | type | length | Measurement flags | id | units | value |
 | --- | --- | --- | --- | --- | --- |
 
-Glucose concentration:
+Glucose concentration in milligrams/deciliter:
 
 | MDC\_CONC\_GLU\_CAPPILARY\_PLASMA | length | Measurement flags | 1 | MDC\_DIM\_MILLI\_G\_PER\_DL | 101.4 |
 | --- | --- | --- | --- | --- | --- |
 
-Oral temperature
+Oral temperature in degrees Celcius
 
 | MDC\_TEMP\_ORAL | length | Measurement flags | 2 | MDC\_DIM\_DEG\_C | 36.7 |
 | --- | --- | --- | --- | --- | --- |
 
-Body weight
+Body weight in pounds
 
 | MDC\_MASS\_BODY\_ACTUAL | length | Measurement flags | 3 | MDC\_DIM\_LB | 160.2 |
 | --- | --- | --- | --- | --- | --- |
 
-Heart rate
+Heart rate in beats per minute
 
 | MDC\_ECG\_HEART\_RATE | length | Measurement flags | 6 | MDC\_DIM\_BEAT\_PER\_MINUTE | 46 |
 | --- | --- | --- | --- | --- | --- |
 
-It should be noted that the above packets are not complete, but they illustrate how the template is the same for each simple numeric measurement type, and thus a decoder can handle all simple numeric quantities with the same code.
+It should be noted that the above packets are not the complete simple numeric packet, but they illustrate how the template is the same for each simple numeric measurement type, and thus a decoder can handle all simple numeric quantities with the same code.
 
 ## **PHD-Gateway Exchange Sequence**
 
@@ -112,7 +113,7 @@ On platforms that give the application control over pairing (for example, Androi
 
 On platforms that do not give the application control over pairing (for example iOS) if the PHD requires pairing, the gateway will know that pairing will be initiated when it attempts to enable the MPM Control Point or MPM Response descriptors.
 
-In both cases, the PHG knows when pairing will occur. The sensor also knows it will not get a pairing request while it is handling some other exchange.
+In both cases, the gateway knows when pairing will occur. The sensor also knows it will not get a pairing request while it is handling some other exchange.
 
 ## **MDC Nomenclature Codes**
 
@@ -134,7 +135,7 @@ Though there are thousands of term codes, at this time there are only a few part
 | MDC\_PART\_PHD\_HF | 129 | Health and Fitness related codes |
 | MDC\_PART\_PHD\_AI | 130 | Assisted and Independent Living related codes. |
 
-The use of codes is what makes the MPM generic. The only device protocol that uses codes at the current time is the IEEE 11073 20601 and 10201 standards. Codes are totally absent in the BT-SIG profiles. The MDC codes are used versus LOINC or SNOMED since they are designed for medical devices.
+The use of codes is what makes the MPM generic. The only device protocol that uses codes at the current time is the IEEE 11073 20601 and 10201 standards. Codes are totally absent in the BT-SIG profiles, however, codes are ubquitous in HL7 and IHE. The MDC codes are used versus LOINC or SNOMED since MDC codes are designed for medical devices.
 
 # **Handling Measurement Time Stamps**
 
@@ -153,10 +154,10 @@ The advertisement and Scan Response shall contain at least the following three f
 - Service UUIDs (all or partial) – must contain the MPM service UUID.
 - Service Data
   - contains the MDC term code(s) for the specialization(s) supported – usually just one
-  - also contains a trailing byte indicating pairing requirements for the device.
+  - also contains a trailing byte indicating pairing requirements for the device. The value 1 indicates pairing/bonding is required, 0 means do not pair.
 - Friendly name (shortened or full)
 
-We are hoping for a 16-bit UUID which, for now, would be 0xF990. The service data contains the UUID of the service followed by the data. In this case the data is a list of 16-bit MDC terms codes from partition 8 giving the specializations supported, for example 0x1004 would be pulse oximeter.
+We are hoping for a 16-bit UUID which, for now, would is 0xF990. The service data contains the UUID of the service followed by the data. In this case the data is a list of 16-bit MDC terms codes from partition 8 giving the specializations supported, for example 0x1004 would be pulse oximeter.
 
 The PHD shall support responding to a scan request.
 
@@ -168,7 +169,7 @@ The Metric Packet Model Service is given by:
 
 The service contains two characteristics:
 
-- The MPM Control Point is writable by the PHG and supports PHD indications.
+- The MPM Control Point is writable by the gateway and supports PHD indications.
   - UUID: 0000F991-0000-1000-8000-00805f9B34FB
 - The MPM Response Characteristic supports PHD notifications.
   - UUID: 0000F992-0000-1000-8000-00805f9B34FB
@@ -185,7 +186,7 @@ The MPM defines the following packet types:
 
 - Current Time Info
 - System Info
-- Config Info
+- *Config Info* (not defined yet)
 - Measurement Records
 
 ## **Motivation Behind the Packet Formats**
@@ -203,7 +204,7 @@ _At this point with AVAs and ASN.1, the MPM is beginning to sound daunting_. How
 - **RTSA** : [Type] [Time-Stamp][Sample-Period][Scale-And-Range-Specification][Sa-Specification][Unit-Code][Simple-Sa-Observed-Value]
 - **String** : [Type] [Time-Stamp][Enum-Observed-Value-Simple-Str]
 
-Three additional attributes [Supplemental-Types], [Observation-Reference-List], and [Measure-Active-Period] are occasionally used in all measurement templates. That makes a total of 18. This set of attributes accounts for about everything that exists in the market today as well as specializations defined but not yet available in the market.
+Three additional attributes [Supplemental-Types], [Observation-Reference-List], and [Measure-Active-Period] are occasionally used in all measurement templates. That makes a total of 18. This set of attributes accounts for everything that exists in the market today as well as specializations defined but not yet available in the market.
 
 The MPM PHD could send a numeric measurement by sending the bytes representing the sequence of attributes [Type] [Time-Stamp][Unit-Code][Simple-Nu-Observed-Value] to the PHG. Since the attributes are self-describing, the four attributes could be sent in any order and the PHG could still decode the measurement.
 
@@ -221,31 +222,31 @@ Which fully expanded is as follows:
 
 _\*In 20601 the absolute time is 8 bytes and is of civil time format._
 
-where the attribute id is the four-byte nomenclature code for that attribute, and the length field is two bytes. To make the expansion above, we had to know what the ASN.1 struct for each of the attributes is. The fixed-format form of the above would contain only the value fields (non-shaded above) and would appear as follows:
+where the attribute id is the four-byte nomenclature code for that attribute, and the length field is two bytes. To make the expansion above, we had to know what the ASN.1 struct for each of the attributes is. The fixed-format form of the above would contain only the value fields and would appear as follows:
 
 | Type nomenclature code | 10-byte Time-Stamp field | Units nomenclature code | FLOAT |
 | --- | --- | --- | --- |
 
 The attribute ID and length fields have been removed which shortens the packet by 24 bytes. In addition, the ASN.1 decoding has been implicitly done.
 
-This simplification comes at a cost. The order of the packet is specified and fixed and must be known by the implementer. The first four bytes is always the 32-bit nomenclature code for the measurement type, the next 10 bytes is always the time stamp, the next four bytes is always the 32-bit nomenclature code for the units, and the next four bytes is always the four-byte FLOAT giving the value. An additional cost is that we have lost flexibility. Every measurement following the above must have all four fields.
+This simplification comes at a cost. The order of the packet is specified and fixed and must be known by the implementer. The first four bytes is always the 32-bit nomenclature code for the measurement type, the next 10 bytes is always the time stamp, the next four bytes is always the 32-bit nomenclature code for the units, and the next four bytes is always the four-byte Mder FLOAT giving the value. An additional cost is that we have lost flexibility. Every measurement following the above must have all four fields.
 
 ### Fixed-Format, Flags, and AVA Extensions
 
 To retain both flexibility, extensibility, and still reap the benefits of the reduced packet size and dealing with ASN.1 structs by using fixed format, the following is done:
 
-- A bit in a flags field is used to define which of the fixed format fields is present. The flag allows one to drop a field if it is not needed.
+- A bit in a flags field is used to define which of the fixed format fields is present. The flag allows one to drop a field if it is not needed. Some fields, like the type, are required in every packet.
 - AVA structs may be appended to the end of the packet when needed. A bit in the flags field is used to indicate the presence of appended AVA structs. This need is so rare, that at the current time there are no market PHDs that would need an appended AVA struct.
 - A length field is added for consistency checks (standard for most binary protocols).
-- The first field in every packet is the command given by the PHG to obtain this packet.
+- The first field in every packet is the command given by the gateway to obtain this packet.
 
 This approach is used for all the MPM packet formats, not just the measurement records. The result is that implementers will rarely need to deal with AVAs or ASN.1, but they will have to know the fixed-format orders for each of the MPM packets.
 
-We have also defined an MPM-specific time stamp which is 10-bytes. There is no 20601 attribute for this type of time stamp. Experience has shown that the 10-byte MPM time stamp is a better and more flexible approach and solves many of the time issues experienced in the field. We also keep the same 10-byte format for all time stamp variants for consistency of implementations even if a given element of the time stamp is not supported.
+We have also defined an MPM-specific time stamp which is 10-bytes. There is no 20601 attribute for this type of time stamp. Experience has shown that the 10-byte MPM time stamp is a better and more flexible approach and solves many of the time issues experienced in the field with BT SIG and proprietary PHDs. We also keep the same 10-byte format for all time stamp variants for consistency of implementations even if a given element of the time stamp is not supported.
 
 ### Measurement Grouping: Header
 
-For the measurement templates we note that several of the popular devices send more than one measurement at a given point in time, for example blood pressure cuffs send both the blood pressure and pulse rate. Therefore, the MPM has defined a measurement record as concatenation of all measurement templates with a common time stamp. The time stamp is 10 bytes, one of the longer fields. The common time stamp is placed in a header along with other possible attributes or fields that are common to all measurements instead of repeating them in each of the individual measurements. An additional flags field is placed in the header to show which of the possible common fields are present. This approach not only shortens the message for multiple-measurement devices, but semantically groups measurements that are taken simultaneously into a single package. Single-measurement PHDs like the thermometer and weight scale will lose some efficiency here as they will have the baggage of the header without reaping the rewards of avoiding duplication. Another advantage of this grouping is for PHDs that don&#39;t send time stamps but rely on the time of reception for the time stamp. In this manner the PHD can group all the measurements that should be considered as occurring at the same time into the single package. If the measurements are sent separately, they will be received at different times by the PHG and reported with different times. Using the headers the PHD can avoid this problem if desired.
+For the measurement templates we note that several of the popular devices send more than one measurement at a given point in time, for example blood pressure cuffs send both the blood pressure and pulse rate. Therefore, the MPM has defined a measurement record as concatenation of all measurement templates with a common time stamp. The time stamp is 10 bytes, one of the longer fields. The common time stamp is placed in a header along with other possible attributes or fields that are common to all measurements instead of repeating them in each of the individual measurements. An additional flags field is placed in the header to show which of the possible common fields are present. This approach not only shortens the message for multiple-measurement devices, but semantically groups measurements that are taken simultaneously into a single package. Another advantage of this grouping is for PHDs that don&#39;t send time stamps but rely on the time of reception for the time stamp. In this manner the PHD can group all the measurements that should be considered as occurring at the same time into the single package. If the measurements are sent separately, they will be received at different times by the PHG and reported with different times. Using the headers the PHD can avoid this problem if desired. A disadvantage of the header approach is that single-measurement PHDs like the thermometer and weight scale will lose some efficiency here as they will have the baggage of the header without reaping the rewards of avoiding duplication.
 
 In any case, the above describes how the MPM packets were derived from the IEEE 11073 20601 DIM Objects.
 
@@ -281,14 +282,14 @@ The header is formatted as follows:
   - Bit 5: When set, the measurements are settings (such as the height, age, and weight on many activity monitors). At this time there is no individual measurement settings option so settings and &#39;standard&#39; measurements cannot be mixed in a group.
   - Bit 6: When set, the header has AVA structs that are common to all measurements. The individual measurement may have additional AVA structs but they shall not duplicate those in the header.
 
-It is not clear the following will be used in the final MPM:
+The following behavior is currently supported but this is likely to be extended or even dropped if it does not find a real use:
 
   - _Bit 7: When set, this record is the first record in a sequence of records where the following records only have the measurement values. This special option is meant to support a more efficient means of sending live continuous measurements or a large database of stored measurements. When this field is set, there will be a group id field prior to the number of measurements. See the section on Optimized Measurement Transmission._
   - _Bit 8: When set, this record is one of the records that belong to the sequence of optimized records. All the static information is given in the first record of the sequence. Which sequence this record belongs to is given by the group id. When this field is set, there will be a group id in the header. See the section on Optimized Measurement Transmission._
 - Length: The length of the remaining entries in the record. The length field occupies two bytes.
 - Time stamp: This field is only present in this position if flags bit 0 is set. If present, it occupies 10 bytes.
 - Supplemental Types: This field is only present in this position if flags bit 1 is set. It contains a one-byte count of the number of supplemental types followed by the list of supplemental types. Each supplemental-type is a four-byte nomenclature code.
-- References: This field is a list of two-byte unsigned integers which are the ids of the referenced measurements. It is preceded by a one-byte field giving the number of references in the list. These are common to all measurements. The measurements referenced by this measurement must have already been received by the PHG during the current connection. Only present in this position if flags bit 2 is set.
+- References: This field is a list of two-byte unsigned integers which are the ids of the referenced measurements. It is preceded by a one-byte field giving the number of references in the list. These are common to all measurements. The measurements referenced by this measurement must have already been received by the gateway during the current connection. Only present in this position if flags bit 2 is set.
 - duration: This field is a four-byte Mder FLOAT giving the duration of the measurement in seconds. Only present in this position if flags bit 3 is set.
 - Person id: This field contains a two-byte person id when flags bit 4 is set.
 - AVAs: This field contains the appended AVA structs that are common to all measurements. It is preceded by a one-byte field giving the number of AVA structs. Only present in this position if flags bit 6 is set.
@@ -309,7 +310,7 @@ Each measurement _n_ is formatted as follows:
 ### Flags:
 
 - Type: What the measurement is as a four-byte nomenclature code. Every measurement has a type field.
-- Length: The length of the remaining part of the _individual_ measurement. If the PHG does not understand the type, it can skip the measurement by jumping &#39;length&#39; bytes to the start of the next measurement. (two bytes)
+- Length: The length of the remaining part of the _individual_ measurement. If the gateway does not understand the type, it can skip the measurement by jumping &#39;length&#39; bytes to the start of the next measurement. (two bytes)
 - Measurement Flags: (two bytes) – The measurement types are mutually exclusive, so they are given by the value of the first four bits.
   - Bits 0, 1, 2, 3: When 0, the measurement is a numeric.
   - Bits 0, 1, 2, 3: When 1, the measurement is a compound numeric.
@@ -318,13 +319,13 @@ Each measurement _n_ is formatted as follows:
   - Bits 0, 1, 2, 3: When 4, the measurement is a 32-bit BITs enumeration.
   - Bits 0, 1, 2, 3: When 5, the measurement is periodic sample or RTSA.
   - Bits 0, 1, 2, 3: When 6, the measurement is a string enumeration (currently not implemented)
-  - Bits 0, 1, 2, 3: When 7, the measurement is a sequence of AVAs (extended object, currently not implemented)
+  - Bits 0, 1, 2, 3: *When 7, the measurement is a sequence of AVAs (extended object, currently not implemented)*
   - Bits 0, 1, 2, 3: When 8, the measurement is a complex compound.
   - Bit 4: When set, the measurement has a supplemental types field.
   - Bit 5: When set, the measurement has a references field.
   - Bit 6: When set, the measurement has a duration field.
   - Bit 7: When set, the measurement has one or more AVA entries.
-  - Bit 8: When set, measurement values are SFLOATs versus FLOATs; applies to simple and compound numerics only.
+  - Bit 8: When set, measurement values are SFLOATs (two byte format) versus FLOATs (four byte format); applies to simple and compound numerics only.
 - id: Identifier for this measurement. (Two-byte unsigned integer.) This value is used to reference this measurement from another measurement. The ids must be unique for every measurement sent _within a connection_.
 - Measurement Value: This field depends upon which measurement value it is. The format of these fields is given in subsequent sections.
 - Supplemental Types: This field is only present in this position if flags bit 4 is set. It contains a one-byte count of the number of supplemental types followed by the list of supplemental types. Each supplemental type is a four-byte nomenclature code.
@@ -338,18 +339,18 @@ The Measurement Value is formatted depending upon the type of measurement value 
 
 #### Numeric Measurement:
 
-The measurement is a numeric if measurement flags bit 0 is set. The numeric Value is formatted as follows:
+The measurement is a numeric if measurement flags bit 0 is set. Most PHD measurements are numerics. The numeric Value is formatted as follows:
 
 | units | value |
 | --- | --- |
 
 Units: Given as a two-byte nomenclature term code from the partition DIM (4).
 
-Value: The value is either an Mder SFLOAT (two bytes) or FLOAT (four bytes). Which float option is used is determined by the measurement flags bit 8. If set, two-bit SFLOATs are used. See IEEE Mder FLOATs for more information.
+Value: The value is either an Mder SFLOAT (two bytes) or FLOAT (four bytes). Which float option is used is determined by the measurement flags bit 8. If set, two-bit SFLOATs are used. See the secontion IEEE Mder FLOATs for more information.
 
 #### Compound and Complex Compound Numeric Measurement:
 
-The measurement is a compound numeric if measurement flags bits 0, 1, 2, 3 is equal to 1. The compound numeric Value is formatted as follows:
+The measurement is a compound numeric (a vector) if measurement flags bits 0, 1, 2, 3 is equal to 1. The compound numeric Value is formatted as follows:
 
 | units | count | Sub-type _n_ | Sub-value _n_ |
 | --- | --- | --- | --- |
@@ -367,7 +368,7 @@ Sub-value: the sub value as either an Mder SFLOAT (two bytes) or FLOAT (four byt
 
 Sub-units: the two-byte term code in partition DIM. Putting the units in the compound allows each compound entry to have a different unit.
 
-For the Compound the units are all the same and factored out
+For the (simple) Compound the units are all the same and factored out
 
 #### Coded enumeration Measurement:
 
@@ -433,9 +434,9 @@ We use the same fixed-format concept for the remaining MPM packets. The packet d
 
 The current time info will indicate whether the PHD supports time stamps at all and for those PHDs that do the information contained in the time stamp.
 
-PHDs that only _generate_ measurements while connected to a PHG and never send stored measurements do not need to report time stamps. The time of reception is taken as the time stamp. These PHDs do not need to make their sense of current time accessible to the PHG as it serves no purpose. The Current Time Info packet will indicate that no time clock is supported.
+PHDs that only _generate_ measurements while connected to a gateway and never send stored measurements do not need to report time stamps. The time of reception is taken as the time stamp. These PHDs do not need to make their sense of current time accessible to the gateway as it serves no purpose. A gateway requesting the Current Time Info from a PHD that does not support a time clock will get an unsupported indication.
 
-PHDs that store data or report time stamps in their measurements even if they do not store data must make their sense of current time accessible to the PHG. In this standard, when the PHG requests the current time, the current time also contains a set of meta data which indicates the PHD&#39;s capabilities with respect to its time clock.
+PHDs that store data or report time stamps in their measurements even if they do not store data must make their sense of current time accessible to the gateway. In this standard, when the gatewat requests the current time, the current time also contains a set of meta data which indicates the PHD&#39;s capabilities with respect to its time clock.
 
 The format of the Current Time Info is as follows:
 
@@ -448,15 +449,9 @@ The format of the Current Time is as follows:
 | --- | --- | --- | --- |
 
 - Command: Always the &#39;Get Current Time Info&#39; command. (Two bytes)
-- Flags: (Two bytes)
-  - Bits 0, 1, 2: clock type. Clock types are mutually exclusive.
-    - 0: PHD does not use time stamps and does not support a real time clock
-    - 1: PHD uses a relative time where the 0-value of the epoch has no meaning.
-    - 2: PHD uses a UTC epoch time where the 0-value is defined as 2000/01/01 00:00:00.000 but does not understand the offset and sets it to 0x80. This option is absolute time.
-    - 3: Reserved
-    - 4: PHD uses a UTC epoch time where the 0-value is defined as 2000/01/01 00:00:00.000 but it does know the time zone and reports the offset to local time in units of 15 minutes in the offset field. _A PHD that claims this level of time support shall have the capability to connect to an external time source on power up, so it knows its current time zone. It shall not depend upon the user (unreliable) or the gateway (only episodically available). This option is base-offset time in 20601 and is not expected to be commonly supported_.
-  - Bit 3: when set, the PHD supports the set time operation
-  - Bit 4: when set, one or more AVA structs are appended to the end
+- Main Flags: (Two bytes)
+  - Bit 0: when set, the PHD supports the set time operation
+  - Bit 1: when set, one or more AVA structs are appended to the end
 
 Only one of the three clocks is allowed during any connection. Alternatively, if the PHD only streams live data, no clock may be present. In that case the flags field is 0 and the length field is 0 and the entire packet is only 6 bytes.
 
@@ -464,12 +459,20 @@ Only one of the three clocks is allowed during any connection. Alternatively, if
 - Current Time: (ten bytes) contains the epoch, flags, offset, and time sync. The current time and all time stamps have exactly the same 10-byte format.
   - Epoch (6 bytes) gives the epoch in milliseconds which gives a range of 3,257,812.23 days or 8901.13 leap years (366-day years) or seconds. For relative times the 0 value means nothing. For all other times the 0 value is defined as 2000/01/01 00:00:00.000 UTC.
   - Flags: (1 byte)
-    - Bit 0: If set the PHD supports a resolution of milliseconds. Otherwise, the resolution is seconds. These are the only two resolutions supported by the MPM. A PHD supporting only seconds resolution will report the epoch in seconds.
-    - Bit 1: If set the epoch value is not on the current timeline of the PHD clock. For the current time, bit 1 will never be set, but for stored data, it is possible to have that situation such as upon power up after a battery change.
+    - Bits 0, 1: 0 = reserved
+    - Bits 0, 1: 1 = supports a relative time where the epoch 0-value has no meaning
+    - Bits 0, 1: 2 = supports an epoch where the 0-value is the UTC time 2000/01/01 00:00:00.0000 (if the offset field is 0x80, offsets are not supported and this clock is equivalent to the 20601 'absolute' time. The 7-byte BT SIG time is also an absolute time, just in a civil format.
+    - Bits 0, 1: 3 = reserved
+    - Bits 2, 3: 0 = clock resolution is seconds
+    - Bits 2, 3: 1 = clock resolution is milliseconds
+    - Bits 2, 3: 2 = clock resolition is tenths of a millisecond
+    - Bits 2, 3: 3 = clock resolution is hundredths. A little weird here, but that is to be consistent with the BT-SIG GHS.
+    - Bits 4, 5 reserved
+    - Bit 5: 1 = If set the epoch value is not on the current timeline of the PHD clock. For the current time, bit 5 will never be set, but for stored data, it is possible to have that situation such as upon power up after a battery change.
   - Offset: (1 byte) gives the signed offset to UTC from the current time zone in units of 15 minutes. For UTC epoch only clocks the offset is set to 0x80 indicating the offset to UTC from local time is not supported. MOST PHDs fall into this category.
   - Time Sync (2 bytes) gives the MDC 16-bit term code from partition 8 for the time synchronization. When set to MDC\_TIME\_SYNC\_NONE this tells the PHG to set the time if the PHD supports the set time.
-- AVA count: Only present if flags bit 4 is set. One byte field giving the number of appended AVA structs.
-- AVA: Only present if flags bit 4 is set. The appended AVA structs. As of this writing, there are no currently defined attributes that could be used here. It is present for future extensibility and/or private use.
+- AVA count: Only present if main flags bit 1 is set. One byte field giving the number of appended AVA structs.
+- AVA: Only present if main flags bit 4 is set. The appended AVA structs. As of this writing, there are no currently defined attributes that could be used here. It is present for future extensibility and/or private use.
 
 If there are no AVA structs, this message is 16 bytes which fits in a single Bluetooth notification when using the minimum MTU size of 23 bytes. Recall AVA structs are used to add additional information that can still be decoded blindly by a gateway. An example of an AVA struct that could be added would be the time sync accuracy. Such an attribute does exist in 20601 but it has never been used in market PHDs so it is not included in the &#39;fixed format&#39; part of the packet.
 
@@ -508,7 +511,7 @@ The format of the System info is as follows:
  |
  |
 
-The informational-content elements shaded in darker gray are required. Those in lighter gray are present in their shown positions if the corresponding flags bit is set.
+The informational-content elements that have no flag settings are required. The elements that are not required are present in their shown positions if the corresponding flags bit is set.
 
 - Command: Always the &#39;Get System Info&#39; command. (Two bytes)
 - Flags: (Two bytes)
@@ -557,7 +560,7 @@ This is a TODO. Not sure what this will entail. Currently, it is not needed. The
 
 # **Command Structure**
 
-The commands have no defined standard (yet). One proposal is to create a private partition in the nomenclature and define command term codes, each of which specify an ASN.1 structure, much like the AVA of the attributes. Most of these commands are simple with no arguments.
+The commands have no defined standard (yet). One proposal is to create a private partition in the nomenclature and define command term codes, each of which specify an ASN.1 structure, much like the AVA of the attributes. Most of these commands are simple with no arguments. At the moment we have just defined a set of codes out of the blue.
 
 ## Commands
 
@@ -574,9 +577,9 @@ _COMMAND\_DELETE\_ALL\_STORED\_RECORDS_ = 0x0010
 _COMMAND\_SEND\_LIVE\_DATA_ = 0x0011
 _COMMAND\_PROPRIETARY_ = 0xFFFF [parameters]
 
-The response consists of the 16-bit command followed by the 16-bit result followed by any parameters [command][response][parameters].
+After the task is done, the PHD sends a packet that consists of the 16-bit command followed by the 16-bit result followed by any parameters [command][response][parameters].
 
-Only the get number of stored records has a parameter.
+Only the *get number of stored records* command has a parameter.
 
 ## Command Results
 
@@ -593,6 +596,8 @@ _CP\_RESULT\_ERROR_ = 0x0004;
 The get number of stored records command is two bytes containing the number of stored records in little endian format.
 
 # **IEEE Mder FLOATs**
+
+This section describes Mder FLOATs; what they are and why they are used. 
 
 Floating point numbers in this specification are represented as an IEEE 32-bit FLOAT or IEEE 16-bit SFLOAT. The reason this format is used is that it preserves precision (precision is different than accuracy). Though the decimals 2, 2.0, 2.00, and 2.000 are all numerically equal, the 2.000 representation indicates that the value obtained is precise to three decimal places. The SFLOAT or FLOAT representation assures that the recipient gets the measurement with the precision to which it was measured. This format is used in some BT SIG health device profiles.
 
@@ -658,7 +663,7 @@ In Bluetooth Low Energy IEEE FLOATs/SFLOATs are sent in little endian order.
 
 # **Optimized Measurement Transmission**
 
-This option is still in a testing phase. It may or may not be adopted in the final MPM. It is also subject to change as more experimenting is done.
+This option is still in a testing phase. You may skip this section. It may or may not be adopted in the final MPM. It is also subject to change as more experimenting is done.
 
 If a PHD sends a sequence of several measurements, perhaps continuously, like streamed pulse oximeter data, we know that several fields in the measurement packet are the same and thus sent repeatedly. The size of the packet could be made considerably smaller if the static unchanging fields could be sent once and any new or updated measurement would contain only the changed fields. The IEEE 11073 20601 protocol works in this fashion.
 
@@ -776,13 +781,13 @@ The MPM advertisement is required to contain the friendly name (full or shortene
 
 Below is an example advertisement for a MPM pulse oximeter:
 
-[02 01 06] // flags
+[02 01 06] // advertisement flags
 
 [0D 09 4D 50 4D 20 50 75 6C 73 65 20 4F 78] //Friendly name: [MPM Pulse Ox]
 
 [03 03 90 F9] // Service UUID MPM: 0xF990
 
-[06 16 90 F904 10 01 // Service data MPM UUID: [0xF990] Specialization Pulse Oximeter: [0x1004]
+[06 16 90 F9 04 10 01 // Service data MPM UUID: [0xF990] Specialization Pulse Oximeter: [0x1004] and pairing required [0x01]
 
 // pairing required
 
@@ -847,12 +852,14 @@ The MPM Response characteristic shall support notifications. It is not readable 
 In a first-time connect, the MPM gateway enables the CP for indications and the Response characteristic for notifications before it begins the spin-up sequence.
 
 ## Spin-Up Sequence
+TODO
 
 # **Packet Structure Summary**
+Here is a set of table summarizing the packet formats
 
 ## Time Info Packet
 
-| command | flags | length | Current Time | AVA count | AVA structs |
+| command | main flags | length | Current Time | AVA count | AVA structs |
 | --- | --- | --- | --- | --- | --- |
 
 ![Shape1](RackMultipart20211114-4-1hp2mkw_html_8cba3116a069d82.gif)
@@ -862,16 +869,19 @@ In a first-time connect, the MPM gateway enables the CP for indications and the 
 
 
 - Time Info Flags: (two bytes)
-  - Bits 0, 1, 2: 0 no time.
-  - Bits 0, 1, 2: 1 relative time
-  - Bits 0, 1, 2: 2 UTC-only epoch time
-  - Bits 0, 1, 2: 3 reserved
-  - Bits 0, 1, 2: 4 base offset time
-  - Bit 3: When set, support set time.
-  - Bit 4: When set, there is AVA entry fields.
+  - Bit 0: When set, supports set time.
+  - Bit 1: When set, there are AVA entry fields.
 - Current time / time stamp Flags: (one byte)
-  - Bits 0, 1, 2: When 1, has millisecond resolution (otherwise seconds).
-  - Bit 3: When set, time stamp is not on the current timeline (always cleared for the current time).
+    - Bits 0, 1: 0 = reserved
+    - Bits 0, 1: 1 = supports a relative time where the epoch 0-value has no meaning
+    - Bits 0, 1: 2 = supports an epoch where the 0-value is the UTC time 2000/01/01 00:00:00.0000 (if the offset field is 0x80, offsets are not supported and this clock is equivalent to the 20601 'absolute' time. The 7-byte BT SIG time is also an absolute time, just in a civil format.
+    - Bits 0, 1: 3 = reserved
+    - Bits 2, 3: 0 = clock resolution is seconds
+    - Bits 2, 3: 1 = clock resolution is milliseconds
+    - Bits 2, 3: 2 = clock resolition is tenths of a millisecond
+    - Bits 2, 3: 3 = clock resolution is hundredths. A little weird here, but that is to be consistent with the BT-SIG GHS.
+    - Bits 4, 5 reserved
+    - Bit 5: 1 = If set the epoch value is not on the current timeline of the PHD clock. For the current time, bit 5 will never be set, but for stored data, it is possible to have that situation such as upon power up after a battery change.
 
 ## System Info Packet
 
@@ -1025,7 +1035,7 @@ In a first-time connect, the MPM gateway enables the CP for indications and the 
 | Sub-value _n_ |
 | --- |
 
-# **Packet Library**
+# **Packet Library Used in these Projects**
 
 The idea of a packet library is to hide as much of the details of creating and populating the ACOM packets shown in the Packet Summary sent over the airwaves. For most peripheral devices, the measurements supported are fixed as they are determined by the sensor(s). Thus, a Blood Pressure cuff is likely to send a Blood Pressure and Pulse Rate measurement, and maybe a Device-Sensor status measurement. It is highly unlikely that it will add a temperature measurement at some future time.
 
